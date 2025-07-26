@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ouvidle</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="ear icon 3.webp">
+</head>
+<body>
+    <div class="banner">
+        👂OUVIDLE
+        <div class="pesquisa">
+            <input class="pesquisa-artista" placeholder="Procure um artista" type="text">
+            <ul class="sugestoes-artistas"></ul>
+        </div>
+    </div>
+    <div class="jogo">
+        <div class="jogo-titulo">
+            <p>Ouvidle Ilimitado</p>
+            <p class="nome-artista"></p>
+            <div>
+                <label for="controle-volume">Volume:</label>
+                <input type="range" id="controle-volume" min="0" max="1" step="0.01" value="1">
+            </div>
+        </div>
+        <div class="jogo-funcional">
+            <div class="chutes">
+                <div class="caixa-chute ativa t1">TENTATIVA 1</div>
+                <div class="caixa-chute t2">TENTATIVA 2</div>
+                <div class="caixa-chute t3">TENTATIVA 3</div>
+                <div class="caixa-chute t4">TENTATIVA 4</div>
+                <div class="caixa-chute t5">TENTATIVA 5</div>
+                <div class="caixa-chute t6">TENTATIVA 6</div>
+                <div class="info escondido">
+                    <div class="info-imagem"></div>
+                    <div class="info-desc"></div>
+                </div>
+            </div>
+            <div class="player">
+                <div class="botao-player">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="15rem" width="15rem" version="1.1" viewBox="0 0 512 512" enable-background="new 0 0 512 512">
+                        <g>
+                            <g fill="#ffffff">
+                            <path d="m354.2,247.4l-135.1-92.4c-4.2-3.1-15.4-3.1-16.3,8.6v184.8c1,11.7 12.4,11.9 16.3,8.6l135.1-92.4c3.5-2.1 8.3-10.7 0-17.2zm-130.5,81.3v-145.4l106.1,72.7-106.1,72.7z"/>
+                            <path d="M256,11C120.9,11,11,120.9,11,256s109.9,245,245,245s245-109.9,245-245S391.1,11,256,11z M256,480.1    C132.4,480.1,31.9,379.6,31.9,256S132.4,31.9,256,31.9S480.1,132.4,480.1,256S379.6,480.1,256,480.1z"/>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                <div class="tempo">
+                    <div class="tempo-barra"></div>
+                </div>
+                <div class="chute-player">
+                    <input class="chute-input" placeholder="Faça um chute" type="text">
+                    <ul class="sugestoes-musicas"></ul>
+                </div>
+                <div class="botoes">
+                    <button class="btn-pular">
+                    </button>
+                    <button class="btn-chutar">
+                        CHUTAR
+                    </button>
+                    <button class="btn-novo-jogo escondido">
+                        NOVO JOGO
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="resultado"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
