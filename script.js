@@ -10,7 +10,11 @@ sliderVolume.addEventListener("input", () => {
 let nomeArtista = document.querySelector('.nome-artista')
 const artistaSalvo = JSON.parse(localStorage.getItem("artistaSelecionado"))
 
-nomeArtista.innerHTML = artistaSalvo.name
+if (artistaSalvo && artistaSalvo.name) {
+  nomeArtista.innerHTML = artistaSalvo.name;
+} else {
+  nomeArtista.innerHTML = "Selecione um artista 🎧";
+}
 
 function getArtistaSelecionado() {
   const salvo = localStorage.getItem("artistaSelecionado");
@@ -201,7 +205,7 @@ let todasMusicasDoArtista = [];
 
 async function buscarMusicaDoArtista(artistaId) {
   try {
-    const res = await fetch(`https://ouvidle-api.onrender.com/api/musicas?artistaId=${artistaId}`);
+    const res = await fetch(`https://ouvidle-api.onrender.com/api/musicas?artistaId=${artistaId}`);z
     const json = await res.json();
 
     if (!json.data || json.data.length === 0) {
