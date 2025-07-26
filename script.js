@@ -205,7 +205,7 @@ let todasMusicasDoArtista = [];
 
 async function buscarMusicaDoArtista(artistaId) {
   try {
-    const res = await fetch(`https://ouvidle-api.onrender.com/api/musicas?artistaId=${artistaId}`);z
+    const res = await fetch(`https://ouvidle-api.onrender.com/api/musicas?artistaId=${artistaId}`);
     const json = await res.json();
 
     if (!json.data || json.data.length === 0) {
@@ -232,7 +232,10 @@ async function buscarMusicaDoArtista(artistaId) {
 
   } catch (err) {
     console.error("Erro ao carregar música do artista salvo:", err);
+    return;
   }
+
+  if(!musicaAtual) return;
 
   console.log("Música carregada:", musicaAtual.title, musicaAtual.preview);
 }
