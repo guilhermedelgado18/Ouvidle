@@ -1,21 +1,4 @@
-const sliderVolume = document.getElementById("controle-volume");
-
-sliderVolume.addEventListener("input", () => {
-  if (audioAtual) {
-    audioAtual.volume = parseFloat(sliderVolume.value);
-  }
-});
-
-
-let nomeArtista = document.querySelector('.nome-artista')
-const artistaSalvo = JSON.parse(localStorage.getItem("artistaSelecionado"))
-
-if (artistaSalvo && artistaSalvo.name) {
-  nomeArtista.innerHTML = artistaSalvo.name;
-} else {
-  nomeArtista.innerHTML = "Selecione um artista 🎧";
-}
-
+//função para buscar o artista do local storage
 function getArtistaSelecionado() {
   const salvo = localStorage.getItem("artistaSelecionado");
   try {
@@ -26,109 +9,26 @@ function getArtistaSelecionado() {
   }
 }
 
+//guardando o artista em uma variável e colocando o nome na tela
+let nomeArtista = document.querySelector('.nome-artista')
 let artistaSelecionado = getArtistaSelecionado();
 
-
-let audioAtual = null;
-let musicaAtual = null;
-let tocando = false;
-let nivelPreview = 0;
-let tempoPreview = [1, 2, 4, 7, 11, 16];
-let tempoMaximo = tempoPreview[nivelPreview];
-let timeoutCorte = null;
-let intervaloBarra = null;
-
-let previewFinalizado = false;
-
-function tocarPreview() {
-  if (!audioAtual) return;
-
-  // Se está tocando, pausa normalmente
-  if (!audioAtual.paused) {
-    audioAtual.pause();
-    tocando = false;
-    atualizarIconePlay(false);
-    clearTimeout(timeoutCorte);
-    clearInterval(intervaloBarra);
-    previewFinalizado = false;
-    return;
-  }
-
-  // Se preview já terminou, volta ao início
-  if (previewFinalizado) {
-    audioAtual.currentTime = 0;
-    previewFinalizado = false;
-  }
-
-  // Retoma ou inicia a reprodução
-  audioAtual.play().then(() => {
-    tocando = true;
-    atualizarIconePlay(true);
-    atualizarBarra();
-
-    const tempoRestante = (tempoMaximo - audioAtual.currentTime) * 1000;
-    timeoutCorte = setTimeout(() => {
-      audioAtual.pause();
-      tocando = false;
-      atualizarIconePlay(false);
-      clearInterval(intervaloBarra);
-      previewFinalizado = true; // marca que chegou ao fim do preview
-    }, tempoRestante);
-  }).catch((e) => {
-    console.error("Erro ao tocar o áudio:", e);
-  });
+if (artistaSelecionado) {
+  nomeArtista.innerHTML = artistaSelecionado.name;
+  buscarMusicaDoArtista(artistaSelecionado.id)
+} else {
+  nomeArtista.innerHTML = "Selecione um artista 🎧";
 }
 
+//lógica para pesquisar e selecionar o artista
+const inputArtista = document.querySelector(".pesquisa-artista");
+const listaArtista = document.querySelector(".sugestoes-artistas");
 
-
-
-function atualizarBarra() {
-  const barra = document.querySelector(".tempo-barra");
-  intervaloBarra = setInterval(() => {
-    if (!audioAtual || audioAtual.paused) return;
-    const progresso = (audioAtual.currentTime / tempoMaximo) * 100;
-    barra.style.width = `${Math.min(progresso, 100)}%`;
-  }, 100);
-}
-
-function resetarBarra() {
-  document.querySelector(".tempo-barra").style.width = "0%";
-}
-
-function atualizarIconePlay(tocando) {
-  const botao = document.querySelector(".botao-player");
-  if (tocando) {
-    botao.classList.add("tocando");
-  } else {
-    botao.classList.remove("tocando");
-  }
-}
-
-document.querySelector(".botao-player").addEventListener("click", () => {
-  if (!musicaAtual || !audioAtual) {
-    alert("Selecione um artista primeiro.");
-    return;
-  }
-
-  tempoMaximo = tempoPreview[nivelPreview];
-  tocarPreview();
-});
-
-const botaoPular = document.querySelector(".btn-pular");
-botaoPular.innerHTML = `PULAR (+1s)`;
-
-botaoPular.addEventListener("click", () => {
-  
-});
-
-const input = document.querySelector(".pesquisa-artista");
-const lista = document.querySelector(".sugestoes-artistas");
-
-input.addEventListener("input", () => {
-  const termo = input.value.trim();
+inputArtista.addEventListener("input", () => {
+  const termo = inputArtista.value.trim();
 
   if (termo.length < 2) {
-    lista.innerHTML = "";
+    listaArtista.innerHTML = "";
     return;
   }
 
@@ -136,10 +36,10 @@ input.addEventListener("input", () => {
   if (antigo) antigo.remove();
 
   window.deezerCallback = function (res) {
-    lista.innerHTML = "";
+    listaArtista.innerHTML = "";
 
     if (!res.data || res.data.length === 0) {
-      lista.innerHTML = "<li>Nenhum artista encontrado</li>";
+      listaArtista.innerHTML = "<li>Nenhum artista encontrado</li>";
       return;
     }
 
@@ -148,8 +48,8 @@ input.addEventListener("input", () => {
       li.textContent = artista.name;
 
       li.addEventListener("click", () => {
-        input.value = artista.name;
-        lista.innerHTML = "";
+        inputArtista.value = artista.name;
+        listaArtista.innerHTML = "";
         artistaSelecionado = artista;
         localStorage.setItem("artistaSelecionado", JSON.stringify(artista));
 
@@ -157,7 +57,7 @@ input.addEventListener("input", () => {
         
       });
 
-      lista.appendChild(li);
+      listaArtista.appendChild(li);
     });
   };
 
@@ -170,37 +70,9 @@ input.addEventListener("input", () => {
   document.body.appendChild(script);
 });
 
-input.addEventListener("keydown", async (e) => {
-  if (e.key === "Enter") {
-    artistaSelecionado = getArtistaSelecionado();
-    
-    if (!artistaSelecionado) {
-      alert("Selecione um artista da lista.");
-      return;
-    }
-
-    // Resetar estado
-    if (audioAtual) {
-      audioAtual.pause();
-      audioAtual = null;
-    }
-
-    musicaAtual = null;
-    nivelPreview = 0;
-    tempoMaximo = tempoPreview[nivelPreview];
-    resetarBarra();
-
-    botaoPular.disabled = false;
-    botaoPular.style.backgroundColor = "";
-    botaoPular.style.cursor = "pointer";
-    botaoPular.innerHTML = "PULAR (+1s)";
-
-    // Salva no localStorage e carrega música
-    localStorage.setItem("artistaSelecionado", JSON.stringify(artistaSelecionado));
-    await buscarMusicaDoArtista(artistaSelecionado.id);
-  }
-});
-
+//lógica para buscar as músicas do artista e selecionar uma aleatória
+let audioAtual = null;
+let musicaAtual = null;
 let todasMusicasDoArtista = [];
 
 async function buscarMusicaDoArtista(artistaId) {
@@ -215,9 +87,12 @@ async function buscarMusicaDoArtista(artistaId) {
 
     todasMusicasDoArtista = json.data;
 
-     const index = Math.floor(Math.random() * todasMusicasDoArtista.length);
+    const index = Math.floor(Math.random() * todasMusicasDoArtista.length);
     musicaAtual = todasMusicasDoArtista[index];
     audioAtual = new Audio(musicaAtual.preview);
+    audioAtual.volume = volumeSalvo;
+
+    console.log(audioAtual.currentTime)
 
     document.querySelector(".info-imagem").innerHTML = `
       <img src="${musicaAtual.album.cover_medium}" />
@@ -229,25 +104,136 @@ async function buscarMusicaDoArtista(artistaId) {
       <p class='info-album'>${musicaAtual.album.title}</p>
     `;
 
-
   } catch (err) {
     console.error("Erro ao carregar música do artista salvo:", err);
     return;
   }
 
   if(!musicaAtual) return;
-
-  console.log("Música carregada:", musicaAtual.title, musicaAtual.preview);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  artistaSelecionado = getArtistaSelecionado();
-  if (artistaSelecionado) {
-    buscarMusicaDoArtista(artistaSelecionado.id);
+//lógica slider de volume
+const sliderVolume = document.getElementById("controle-volume");
+const chaveVolume = "volume";
+
+if (localStorage.getItem(chaveVolume) === null) {
+  localStorage.setItem(chaveVolume, "1");
+}
+
+const volumeSalvo = parseFloat(localStorage.getItem(chaveVolume));
+sliderVolume.value = volumeSalvo;
+
+if (audioAtual) {
+  audioAtual.volume = volumeSalvo;
+}
+
+sliderVolume.addEventListener("input", () => {
+  const volume = parseFloat(sliderVolume.value);
+  if (audioAtual) {
+    audioAtual.volume = volume;
   }
+  localStorage.setItem(chaveVolume, volume);
 });
 
+//lógica de preview da música
+let tocando = false;
 
+let nivelPreview = 0;
+let tempoPreview = [1, 2, 4, 7, 11, 16];
+let tempoMaximo = tempoPreview[nivelPreview];
+let timeoutCorte = null;
+let intervaloBarra = null;
+
+let previewFinalizado = false;
+
+function tocarPreview() {
+  if (!audioAtual) return;
+
+  // Se o preview estiver tocando, pausa
+  if (!audioAtual.paused) {
+    audioAtual.pause();
+    tocando = false;
+    clearTimeout(timeoutCorte);
+    clearInterval(intervaloBarra);
+    previewFinalizado = false;
+    return;
+  }
+
+  // Se o preview já terminou, volta ao início
+  if (previewFinalizado) {
+    audioAtual.currentTime = 0;
+    previewFinalizado = false;
+  }
+
+  // Retoma ou inicia a reprodução
+  audioAtual.play().then(() => {
+    tocando = true;
+    atualizarBarra();
+
+    const tempoRestante = (tempoMaximo - audioAtual.currentTime) * 1000;
+    timeoutCorte = setTimeout(() => {
+      audioAtual.pause();
+      tocando = false;
+      clearInterval(intervaloBarra);
+      previewFinalizado = true;
+    }, tempoRestante);
+  }).catch((e) => {
+    console.error("Erro ao tocar o áudio:", e);
+  });
+}
+
+//lógica do botão de play
+const botaoPlayer = document.querySelector('.botao-player')
+
+botaoPlayer.addEventListener("click", () => {
+  if (!musicaAtual || !audioAtual) {
+    setTimeout(() => {
+      tocarPreview();
+    }, 1000)
+  }
+
+  if(artistaSelecionado === null) {
+    alert("Selecione um artista primeiro")
+    return
+  }
+
+  if(localStorage.getItem("volume" === null)) {
+    localStorage.setItem("volume", "1")
+  }
+
+  tempoMaximo = tempoPreview[nivelPreview];
+  tocarPreview();
+});
+
+//lógica para atualizar a barra de tempo da música
+function atualizarBarra() {
+  const barra = document.querySelector(".tempo-barra");
+  intervaloBarra = setInterval(() => {
+    if (!audioAtual || audioAtual.paused) return;
+    const progresso = (audioAtual.currentTime / tempoMaximo) * 100;
+    barra.style.width = `${Math.min(progresso, 100)}%`;
+  }, 100);
+}
+
+function resetarBarra() {
+  document.querySelector(".tempo-barra").style.width = "0%";
+}
+
+//lógica de avançar o preview da música
+let caixaPulada = document.querySelector(`.t${nivelPreview+1}`)
+let caixaChute = document.querySelector(`.t${nivelPreview+2}`)
+
+function avancarPreview() {
+  nivelPreview++;
+  tempoMaximo = tempoPreview[nivelPreview];
+  previewFinalizado = true;
+  audioAtual.currentTime = 0;
+  tocarPreview();
+  caixaPulada = document.querySelector(`.t${nivelPreview+1}`)
+  caixaChute = document.querySelector(`.t${nivelPreview+2}`)
+}
+
+//lógica de escolher a música para chutar
 const inputChute = document.querySelector(".chute-input");
 const listaSugestoes = document.querySelector(".sugestoes-musicas");
 
@@ -274,91 +260,25 @@ inputChute.addEventListener("input", () => {
   });
 });
 
-const botaoChute = document.querySelector('.btn-chutar')
-const resposta = document.querySelector('.info')
-const resultado = document.querySelector('.resultado')
+//lógica do botão de pular
+const botaoPular = document.querySelector(".btn-pular");
 
-botaoChute.addEventListener('click', function funcaoBotaoChute() {
-  if (!musicaAtual) {
-    alert("Nenhuma música está tocando!");
-    return;
-  }
-
-  const ativa = document.querySelector('.ativa')
-  const chute = inputChute.value.trim().toLowerCase();
-  const nomeCorreto = musicaAtual.title.trim().toLowerCase();
-
-  if (chute === nomeCorreto) {
-    ativa.innerHTML = `✅ ${musicaAtual.title}`
-    
-    resposta.classList.remove('escondido')
-    inputChute.disabled = true;
-    botaoPular.disabled = true;
-    botaoChute.disabled = true;
-    botaoPular.style.cursor = 'default'
-
-    if(nivelPreview === 5) {
-      botaoPular.style.backgroundColor = "#9e0101ff";
-    }
-
-    resultado.innerHTML = 'BOA PINGU 👏🐧'
-    resultado.style.backgroundColor = '#03a616'
-    resultado.classList.add('trigger-animation')
-
-    botaoNovo()
-
-  } else {
-    if(nivelPreview < 5) {
-      avancarPreview();
-      ativa.innerHTML = `❌ ${inputChute.value.trim()}`
-    } else {
-      const ultima = document.querySelector('.t6')
-      ultima.innerHTML = `❌ ${inputChute.value.trim()}`
-      resposta.classList.remove('escondido')
-      inputChute.disabled = true;
-      botaoPular.disabled = true;
-      botaoChute.disabled = true;
-  
-      botaoPular.style.cursor = 'default';
-      botaoPular.style.backgroundColor = "#9e0101ff";
-      botaoPular.style.color = '#bdbdbdff'
-
-      resultado.innerHTML = 'PERDEU 🫵😂'
-      resultado.classList.add('trigger-animation')
-
-      botaoNovo()
-    }
-
-
-  }
-
-  inputChute.value = ""; // limpa o input
-})
-
-
-function avancarPreview() {
-  let caixaPulada = document.querySelector(`.t${nivelPreview+1}`)
-  let caixaChute = document.querySelector(`.t${nivelPreview+2}`)
-  
+botaoPular.addEventListener("click", () => {
   if (nivelPreview < 4) {
     caixaChute.classList.add('ativa')
     caixaPulada.classList.remove('ativa')
     caixaPulada.innerHTML = "⏭️ pulou, covarde"
     
-    nivelPreview++;
-    tempoMaximo = tempoPreview[nivelPreview];
-    previewFinalizado = true;
-    tocarPreview();
+    avancarPreview()
+
     botaoPular.innerHTML = `PULAR (+${nivelPreview + 1}s)`;
   } else if (nivelPreview === 4) {
     caixaChute.classList.add('ativa')
     caixaPulada.classList.remove('ativa')
     caixaPulada.innerHTML = "⏭️ pulou, covarde"
     
-    nivelPreview++;
-    tempoMaximo = tempoPreview[nivelPreview];
-    previewFinalizado = true;
-    tocarPreview();
+    avancarPreview()
+
     botaoPular.style.backgroundColor = "#d30101";
     botaoPular.style.color = 'white'
     botaoPular.innerHTML = "DESISTIR";
@@ -378,16 +298,90 @@ function avancarPreview() {
 
     botaoNovo();
   }
-}
+});
 
+//lógica botão de chutar
+const botaoChute = document.querySelector('.btn-chutar')
+const resposta = document.querySelector('.info')
+const resultado = document.querySelector('.resultado')
+
+botaoChute.addEventListener('click', () => {
+  if (!musicaAtual) {
+    alert("Nenhuma música está tocando!");
+    return;
+  }
+
+  const chute = inputChute.value.trim().toLowerCase();
+  const nomeCorreto = musicaAtual.title.trim().toLowerCase();
+
+  if (chute === nomeCorreto) {
+    caixaPulada.innerHTML = `✅ ${musicaAtual.title}`
+    
+    resposta.classList.remove('escondido')
+    inputChute.disabled = true;
+    botaoPular.disabled = true;
+    botaoChute.disabled = true;
+    botaoPular.style.cursor = 'default'
+
+    if(nivelPreview === 5) {
+      botaoPular.style.backgroundColor = "#9e0101ff";
+      botaoPular.style.color = '#bdbdbdff'
+      botaoPular.innerHTML = "DESISTIR"
+    }
+
+    nivelPreview = 5;
+    tempoMaximo = tempoPreview[nivelPreview];
+    tocarPreview()
+
+    resultado.innerHTML = 'BOA PINGU 👏🐧'
+    resultado.style.backgroundColor = '#03a616'
+    resultado.classList.add('trigger-animation')
+
+    botaoNovo()
+
+  } else {
+    if(nivelPreview < 4) {
+      caixaChute.classList.add('ativa')
+      caixaPulada.classList.remove('ativa')
+      caixaPulada.innerHTML = `❌ ${inputChute.value.trim()}`
+      avancarPreview();
+      botaoPular.innerHTML = `PULAR (+${nivelPreview + 1}s)`;
+    } else if (nivelPreview === 4){
+      caixaChute.classList.add('ativa')
+      caixaPulada.classList.remove('ativa')
+      caixaPulada.innerHTML = `❌ ${inputChute.value.trim()}`
+      avancarPreview();
+
+      botaoPular.style.backgroundColor = "#d30101";
+      botaoPular.style.color = 'white'
+      botaoPular.innerHTML = "DESISTIR"
+    } else if (nivelPreview === 5) {
+      caixaPulada.innerHTML = `❌ ${inputChute.value.trim()}`
+      resposta.classList.remove('escondido')
+      inputChute.disabled = true;
+      botaoPular.disabled = true;
+      botaoChute.disabled = true;
+  
+      botaoPular.style.cursor = 'default';
+      botaoPular.style.backgroundColor = "#9e0101ff";
+      botaoPular.style.color = '#bdbdbdff'
+
+      resultado.innerHTML = 'PERDEU 🫵😂'
+      resultado.classList.add('trigger-animation')
+
+      botaoNovo()
+    }
+  }
+  inputChute.value = "";
+})
+
+//lógica do botão de novo jogo
 const botaoNovoJogo = document.querySelector('.btn-novo-jogo')
 
 function botaoNovo() {
   botaoChute.classList.add('escondido')
   botaoNovoJogo.classList.remove('escondido')
   botaoNovoJogo.addEventListener('click', () => {
-    window.location.reload();
+    window.location.reload()
   })
 }
-
-botaoPular.addEventListener('click', avancarPreview)
