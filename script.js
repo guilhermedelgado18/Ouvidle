@@ -1,3 +1,21 @@
+//alterando a logo por meio de JS
+const logo = document.querySelector('.logo')
+
+if(window.innerWidth <= 800) {
+    logo.textContent = "👂"
+  } else {
+    logo.textContent = "👂OUVIDLE"
+}
+
+window.addEventListener('resize', () => {
+
+  if(window.innerWidth <= 800) {
+    logo.textContent = "👂"
+  } else {
+    logo.textContent = "👂OUVIDLE"
+  }
+})
+
 //função para buscar o artista do local storage
 function getArtistaSelecionado() {
   const salvo = localStorage.getItem("artistaSelecionado");
@@ -100,8 +118,10 @@ async function buscarMusicaDoArtista(artistaId) {
 
     document.querySelector(".info-desc").innerHTML = `
       <p class='info-titulo'>${musicaAtual.title}</p>
-      <p class='info-artista'>${musicaAtual.artist.name}</p>
-      <p class='info-album'>${musicaAtual.album.title}</p>
+      <div class='info-baixo'>
+        <p class='info-artista'>${musicaAtual.artist.name}</p>
+        <p class='info-album'>${musicaAtual.album.title}</p>
+      </div>
     `;
 
   } catch (err) {

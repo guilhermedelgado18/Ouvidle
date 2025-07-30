@@ -1,71 +1,25 @@
-
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-	display: block;
-}
-body {
-	line-height: 1;
-}
-ol, ul {
-	list-style: none;
-}
-blockquote, q {
-	quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
+* {
+    box-sizing: border-box;
 }
 
 body {
     background-color: rgb(255, 243, 215);
-    display: flex;
-    justify-content: center;
-}
-
-* {
-    box-sizing: border-box;
+    margin: 0;
 }
 
 .banner {
     display: flex;
     justify-content: space-between;
-    padding: 0 15rem;
+    padding: 0 15%;
     align-items: center;
     background-color: rgb(51, 51, 51);
     color: white;
-    font-size: 3rem;
-    font-weight: 500;
+    font-size: 1.2em;
+    font-weight: 300;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     height: 5rem;
     width: 100%;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .pesquisa {
@@ -111,12 +65,16 @@ body {
   background-color: #eee;
 }
 
+.container-jogo {
+    display: flex;
+    justify-content: center;
+    height: calc(100vh - 5rem);
+}
+
 .jogo {
     background-color: rgb(31, 31, 31);
-    position: fixed;
     height: 30rem;
     width: 70%;
-    top: 15%;
 }
 
 .jogo-titulo {
@@ -128,7 +86,7 @@ body {
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     background-color: rgb(63, 63, 63);
     padding: 1rem;
     display: flex;
@@ -146,6 +104,7 @@ body {
     background-color: rgb(46, 46, 46);
     width: 65%;
     padding: 1rem;
+    height: auto;
 }
 
 .caixa-chute {
@@ -251,6 +210,7 @@ body {
 .botoes {
     display: flex;
     justify-content: space-between;
+    width: 100%;
 }
 
 .botoes button{
@@ -287,25 +247,46 @@ body {
 .info {
     border: 2px solid white;
     padding: 10px;
+    height: 8rem;
     display: flex;
     flex-direction: row;
     color: white;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
+
+.info-imagem {
+    width: auto;
+    height: 100%;
+    overflow: hidden;
+    margin-right: 1rem;
+}
+
 .info img{
-    width: 90px;
-    margin-right: 13px;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.info-desc {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .info-titulo {
     font-weight: 700;
-    font-size: 25px;
-    margin-bottom: 20px;
+    font-size: 1.4rem;
+    margin: 0;
 }
 
 .info-artista {
     font-size: 15px;
-    margin-bottom: 8px;
+    margin:0 0 0.1rem 0;
+}
+
+.info-album {
+    margin: 0;
 }
 
 .escondido {
@@ -313,7 +294,7 @@ body {
 }
 
 .resultado {
-    position: absolute;
+    position: fixed;
     top: 5%;
     left: 50%;
     transform: translateX(-50%);
@@ -351,4 +332,47 @@ body {
   100% {
     opacity: 0;
   }
+}
+
+@media (max-width: 600px) {
+    .banner {
+        padding: 0 5%;
+    }
+
+    .jogo {
+        width: 90%;
+    }
+
+    .jogo-titulo {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 800px) {
+    .jogo-funcional {
+        flex-direction: column;
+    }
+
+    .chutes, .player {
+        width: 100%;
+    }
+
+    .player {
+        align-items: center;
+    }
+
+    .botao-player {
+        width: 50%;
+    }
+
+    .info {
+        height: 8rem;
+    }
+
+    .resultado {
+        position: fixed;
+        top: 5%;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 }
