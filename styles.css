@@ -19,7 +19,19 @@ body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     height: 5rem;
     width: 100%;
-    margin-bottom: 1.5rem;
+}
+
+.modos-jogo {
+    font-weight: 400;
+    display: flex;
+    flex-direction: row;
+}
+
+.modos-jogo a {
+    margin: 0 1rem;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .pesquisa {
@@ -29,7 +41,6 @@ body {
 .pesquisa-artista {
     height: 3rem;
     width: 100%;
-    border-radius: 1.5rem;
     border: none;
     padding: 1rem;
     font-size: 1.5rem;
@@ -46,7 +57,7 @@ body {
   position: absolute;
   top: 100%;
   width: 100%;
-  z-index: 1;
+  z-index: 10;
   font-size: 25px;
   border: 1px solid #ccc;
   color: black;
@@ -75,6 +86,7 @@ body {
     background-color: rgb(31, 31, 31);
     height: 30rem;
     width: 70%;
+    margin-top: 1.5rem;
 }
 
 .jogo-titulo {
@@ -290,7 +302,8 @@ body {
 }
 
 .escondido {
-    display: none;
+    display: none !important;
+    pointer-events: none;
 }
 
 .resultado {
@@ -375,4 +388,188 @@ body {
         left: 50%;
         transform: translateX(-50%);
     }
+
+    .modos-jogo a {
+        margin: 0 0.7rem;
+    }
+}
+
+/*---------- MULTIPLAYER ------------*/
+
+.container-multi {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    height: calc(100vh - 5rem);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.escolher-modo {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(46, 46, 46);
+    height: 80%;
+    width: 40%;
+    margin-top: 1.5rem;
+}
+
+.username {
+    height: 25%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 5rem;
+}
+
+.username input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.modos {
+    height: 5rem;
+    width: 100%;
+    background-color: rgb(63, 63, 63);
+    display: flex;
+    color: rgb(107, 107, 107);
+    flex-direction: row;
+}
+
+.modos div {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.modos div:hover {
+    color: rgb(145, 145, 145);
+    cursor: pointer;
+}
+
+.modo-escolhido {
+    border-bottom: 5px solid white;
+    color: white;
+    pointer-events: none;
+}
+
+.conteudo-modo {
+    height: 85%;
+    width: 100%;
+    padding: 2rem 5rem;
+}
+
+.conteudo-modo button {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    background-color: #6d6d6d;
+    border: none;
+    color: #c2c2c2;
+    cursor: pointer;
+}
+
+.conteudo-modo button:hover {
+    color: white;
+    background-color: #838383;
+}
+
+.conteudo-modo input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.input-sala {
+    text-transform: uppercase;
+}
+
+.input-sala::placeholder {
+    text-transform: none;
+}
+
+.modal {
+  display: none; /* Escondido por padrão */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-conteudo {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 300px;
+}
+
+.modal-conteudo input {
+  width: 80%;
+  padding: 8px;
+  margin: 10px 0;
+}
+
+.botoes-modal button {
+  margin: 5px;
+  padding: 8px 12px;
+}
+
+/*-------teste layout chat--------*/
+
+.chat-teste {
+    position: absolute;
+    width: 25%;
+    height: 100%;
+    background-color: rgb(63, 63, 63);
+    color: white;
+    top: 0;
+    right: 0;
+}
+
+.chat-codigo {
+    margin: 0;
+}
+
+.chat { 
+    padding: 15px;
+    height: 90%; 
+    width: 100%;
+    overflow-y: auto;
+}
+
+.div-mensagem-chat {
+    height: 10%;
+}
+
+.mensagem { 
+    width: 100%; 
+    height: 100%;
+    background-color: #6d6d6d;
+    color: white;
+    padding: 0.5rem;
+    border: none;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.mensagem::placeholder {
+    color: #c4c4c4;
+}
+
+.mensagem:focus {
+    outline: none;
+}
+
+.enviar { 
+    padding: 5px 10px; 
 }

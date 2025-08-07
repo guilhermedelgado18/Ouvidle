@@ -1,0 +1,34 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    height: 200vh;
+}
+
+.banner {
+    width: 100%;
+    min-width: 100%;
+    height: 5rem;
+    background-color: grey;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15%;
+}
+
+.logo {
+    margin: 0;
+}
+
+.escrota {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+}
+
+@media (max-width: 600px) {
+    .banner {
+        padding: 0 5%;
+    }
+}

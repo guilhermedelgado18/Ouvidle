@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OUVIDLE</title>
+    <link rel="icon" href="ear icon 3.webp">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="resultado"></div>
+    <div class="banner">
+        <h1 class="logo"></h1>
+        <div class="modos-jogo">
+            <a href="/index.html">SOLO</a>
+            <a href="/">MULTIPLAYER</a>
+        </div>
+    </div>
+
+    <div class="container-multi">
+        <div class="chat-teste escondido">
+            
+
+            <div class="chat">
+                <h2 class="chat-codigo"></h2>
+            </div>
+
+            <div class="div-mensagem-chat">
+                <input type="text" class="mensagem" placeholder="Digite sua mensagem..." />
+            </div>
+            
+        </div>
+        <div class="escolher-modo">
+            <div class="username">
+                <input type="text" class="input-username" maxlength="20" placeholder="Seu nome">
+            </div>
+            <div class="modos">
+                <div class="criar-sala modo-escolhido">CRIAR SALA</div>
+                <div class="entrar-sala">ENTRAR EM SALA</div>
+            </div>
+            <div class="conteudo-modo">
+                <div class="conteudo-criar">
+                    <input type="number" min="2" max="20" step="1" onkeydown="return false;" class="max-jogadores" placeholder="Máx. de Jogadores">
+                    <input type="password" maxlength="12" class="senha-sala" placeholder="Senha (opcional)">
+                    <button class="btn-criar-sala">CRIAR SALA</button>
+                </div>
+                <div class="conteudo-entrar escondido">
+                    <input type="text" placeholder="Código da Sala" maxlength="5" class="input-sala">
+                    <button class="btn-entrar-sala">ENTRAR NA SALA</button>
+                </div>
+            </div>
+            <div id="modal-senha" class="modal">
+                <div class="modal-conteudo">
+                    <h2>Digite a senha da sala</h2>
+                    <input type="password" id="input-senha" placeholder="Senha">
+                    <div class="botoes-modal">
+                    <button id="btn-confirmar">Confirmar</button>
+                    <button id="btn-cancelar">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <button class="testar-socket">TESTE</button>
+    <p class="resposta-servidor"></p>
+
+    <script type="module" src="script-teste.js"></script>
+</body>
+</html>

@@ -1,7 +1,12 @@
+let audioAtual = null;
+let musicaAtual = null;
+let todasMusicasDoArtista = [];
+
+
 //alterando a logo por meio de JS
 const logo = document.querySelector('.logo')
 
-if(window.innerWidth <= 800) {
+if(window.innerWidth <= 1100) {
     logo.textContent = "👂"
   } else {
     logo.textContent = "👂OUVIDLE"
@@ -9,12 +14,52 @@ if(window.innerWidth <= 800) {
 
 window.addEventListener('resize', () => {
 
-  if(window.innerWidth <= 800) {
+  if(window.innerWidth <= 1100) {
     logo.textContent = "👂"
   } else {
     logo.textContent = "👂OUVIDLE"
   }
 })
+
+//guardando o estado atual do jogo
+let estadoJogo = {
+  artista: getArtistaSelecionado(),
+  musicaAtual: null,
+  audioAtual: null,
+  tentativasRestantes: 6,
+  tentativaAtual: 1,
+  tempoPreview: [1, 2, 4, 7, 11, 16],
+  status() {
+    console.log(this.musicaAtual)
+    console.log(this.audioAtual)
+  }
+}
+
+function resetaUI() {
+  document.querySelector(`.t${nivelPreview+1}`).classList.remove('ativa')
+  document.querySelector('.t1').classList.add('ativa')
+
+  document.querySelector('.t1').innerHTML = 'TENTATIVA 1'
+  document.querySelector('.t2').innerHTML = 'TENTATIVA 2'
+  document.querySelector('.t3').innerHTML = 'TENTATIVA 3'
+  document.querySelector('.t4').innerHTML = 'TENTATIVA 4'
+  document.querySelector('.t5').innerHTML = 'TENTATIVA 5'
+  document.querySelector('.t6').innerHTML = 'TENTATIVA 6'
+
+  resposta.classList.add('escondido')
+
+  botaoPular.innerHTML = 'PULAR (+1s)'
+  botaoPular.style.color = 'black'
+  botaoPular.style.backgroundColor = 'white'
+  botaoPular.disabled = false;
+
+  botaoChute.disabled = false;
+
+  inputChute.disabled = false;
+
+  botaoChute.classList.remove('escondido')
+  botaoNovoJogo.classList.add('escondido')
+}
 
 //função para buscar o artista do local storage
 function getArtistaSelecionado() {
@@ -33,7 +78,9 @@ let artistaSelecionado = getArtistaSelecionado();
 
 if (artistaSelecionado) {
   nomeArtista.innerHTML = artistaSelecionado.name;
-  buscarMusicaDoArtista(artistaSelecionado.id)
+  buscarMusicaDoArtista(artistaSelecionado.id).then(() => {
+    escolherMusica()
+  })
 } else {
   nomeArtista.innerHTML = "Selecione um artista 🎧";
 }
@@ -89,9 +136,7 @@ inputArtista.addEventListener("input", () => {
 });
 
 //lógica para buscar as músicas do artista e selecionar uma aleatória
-let audioAtual = null;
-let musicaAtual = null;
-let todasMusicasDoArtista = [];
+
 
 async function buscarMusicaDoArtista(artistaId) {
   try {
@@ -103,14 +148,20 @@ async function buscarMusicaDoArtista(artistaId) {
       return;
     }
 
-    todasMusicasDoArtista = json.data;
+    todasMusicasDoArtista = json.data
 
+  } catch (err) {
+    console.error("Erro ao carregar música do artista salvo:", err);
+    return;
+  }
+}
+
+function escolherMusica() {
     const index = Math.floor(Math.random() * todasMusicasDoArtista.length);
+
     musicaAtual = todasMusicasDoArtista[index];
     audioAtual = new Audio(musicaAtual.preview);
     audioAtual.volume = volumeSalvo;
-
-    console.log(audioAtual.currentTime)
 
     document.querySelector(".info-imagem").innerHTML = `
       <img src="${musicaAtual.album.cover_medium}" />
@@ -122,14 +173,9 @@ async function buscarMusicaDoArtista(artistaId) {
         <p class='info-artista'>${musicaAtual.artist.name}</p>
         <p class='info-album'>${musicaAtual.album.title}</p>
       </div>
-    `;
+    `; 
 
-  } catch (err) {
-    console.error("Erro ao carregar música do artista salvo:", err);
-    return;
-  }
-
-  if(!musicaAtual) return;
+    if(!musicaAtual) return;
 }
 
 //lógica slider de volume
@@ -349,8 +395,9 @@ botaoChute.addEventListener('click', () => {
       botaoPular.innerHTML = "DESISTIR"
     }
 
-    nivelPreview = 5;
-    tempoMaximo = tempoPreview[nivelPreview];
+    todasMusicasDoArtista = todasMusicasDoArtista.filter(musica => musica.id !== musicaAtual.id)
+
+    tempoMaximo = 16;
     tocarPreview()
 
     resultado.innerHTML = 'BOA PINGU 👏🐧'
@@ -402,6 +449,15 @@ function botaoNovo() {
   botaoChute.classList.add('escondido')
   botaoNovoJogo.classList.remove('escondido')
   botaoNovoJogo.addEventListener('click', () => {
-    window.location.reload()
+    resetaUI()
+    nivelPreview = 0
+    caixaPulada = document.querySelector(`.t${nivelPreview+1}`)
+    caixaChute = document.querySelector(`.t${nivelPreview+2}`)
+    audioAtual.pause()
+    escolherMusica()
   })
+}
+
+function removerFeats() {
+  todasMusicasDoArtista = todasMusicasDoArtista.filter(musica => musica.artist.name !== artistaSelecionado.name)
 }
